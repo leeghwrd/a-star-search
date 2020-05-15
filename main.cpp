@@ -168,7 +168,7 @@ std::vector<std::vector<State>> Search(std::vector<std::vector<State>> grid, int
 
   // We've run out of new nodes to explore and haven't found a path.
   std::cout << "No path found!"
-       << "\n";
+            << "\n";
   return std::vector<std::vector<State>>{};
 }
 
