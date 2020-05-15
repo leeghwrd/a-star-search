@@ -4,16 +4,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "cell.h"
+#include "state.h"
 
-enum class State
-{
-  kEmpty,
-  kObstacle,
-  kClosed,
-  kPath,
-  kStart,
-  kFinish
-};
 
 // directional deltas
 const int delta[4][2]{{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
@@ -54,23 +47,9 @@ std::vector<std::vector<State>> ReadBoardFile(std::string path)
   return board;
 }
 
-/**
- * Compare the F values of two cells.
- */
-bool Compare(const std::vector<int> a, const std::vector<int> b)
-{
-  int f1 = a[2] + a[3]; // f1 = g1 + h1
-  int f2 = b[2] + b[3]; // f2 = g2 + h2
-  return f1 > f2;
-}
 
-/**
- * std::sort the two-dimensional std::vector of ints in descending order.
- */
-void CellSort(std::vector<std::vector<int>> *v)
-{
-  std::sort(v->begin(), v->end(), Compare);
-}
+
+
 
 // Calculate the manhattan distance
 int Heuristic(int x1, int y1, int x2, int y2)
@@ -78,17 +57,7 @@ int Heuristic(int x1, int y1, int x2, int y2)
   return std::abs(x2 - x1) + std::abs(y2 - y1);
 }
 
-/** 
- * Check that a cell is valid: on the grid, not an obstacle, and clear. 
- */
-bool CheckValidCell(int x, int y, std::vector<std::vector<State>> &grid)
-{
-  bool on_grid_x = (x >= 0 && x < grid.size());
-  bool on_grid_y = (y >= 0 && y < grid[0].size());
-  if (on_grid_x && on_grid_y)
-    return grid[x][y] == State::kEmpty;
-  return false;
-}
+
 
 /** 
  * Add a node to the open list and mark it as open. 
@@ -118,7 +87,7 @@ void ExpandNeighbors(const std::vector<int> &current, int goal[2], std::vector<s
     int y2 = y + delta[i][1];
 
     // Check that the potential neighbor's x2 and y2 values are on the grid and not closed.
-    if (CheckValidCell(x2, y2, grid))
+    if (Cell::CheckValidCell(x2, y2, grid))
     {
       // Increment g value, compute h value, and add neighbor to open list.
       int g2 = g + 1;
@@ -146,7 +115,7 @@ std::vector<std::vector<State>> Search(std::vector<std::vector<State>> grid, int
   while (open.size() > 0)
   {
     // Get the next node
-    CellSort(&open);
+    Cell::CellSort(&open);
     auto current = open.back();
     open.pop_back();
     x = current[0];
@@ -172,23 +141,6 @@ std::vector<std::vector<State>> Search(std::vector<std::vector<State>> grid, int
   return std::vector<std::vector<State>>{};
 }
 
-std::string CellString(State cell)
-{
-  switch (cell)
-  {
-  case State::kObstacle:
-    return "⛰️   ";
-  case State::kPath:
-    return "🚗   ";
-  case State::kStart:
-    return "🚦   ";
-  case State::kFinish:
-    return "🏁   ";
-
-  default:
-    return "-1   ";
-  }
-}
 
 void PrintBoard(const std::vector<std::vector<State>> board)
 {
@@ -196,7 +148,7 @@ void PrintBoard(const std::vector<std::vector<State>> board)
   {
     for (int j = 0; j < board[i].size(); j++)
     {
-      std::cout << CellString(board[i][j]);
+      std::cout << Cell::CellString(board[i][j]);
     }
     std::cout << "\n";
   }

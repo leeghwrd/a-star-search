@@ -4,4 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(a_star_search)
 
-add_executable(a-star-search src/a-star-search.cpp)
+include_directories(include)
+file(GLOB SOURCES "src/*.cpp")
+
+add_executable(a-star-search ${SOURCES})
