@@ -4,4 +4,4 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(a_star_search)
 
-add_executable(main src/main.cpp)
+add_executable(a-star-search src/a-star-search.cpp)
