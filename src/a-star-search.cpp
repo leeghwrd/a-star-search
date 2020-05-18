@@ -6,50 +6,10 @@
 #include <vector>
 #include "cell.h"
 #include "state.h"
-
+#include "board.h"
 
 // directional deltas
 const int delta[4][2]{{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
-
-std::vector<State> ParseLine(std::string line)
-{
-  std::stringstream sline(line);
-  int n;
-  char c;
-  std::vector<State> row;
-  while (sline >> n >> c && c == ',')
-  {
-    if (n == 0)
-    {
-      row.push_back(State::kEmpty);
-    }
-    else
-    {
-      row.push_back(State::kObstacle);
-    }
-  }
-  return row;
-}
-
-std::vector<std::vector<State>> ReadBoardFile(std::string path)
-{
-  std::ifstream myfile(path);
-  std::vector<std::vector<State>> board{};
-  if (myfile)
-  {
-    std::string line;
-    while (getline(myfile, line))
-    {
-      std::vector<State> row = ParseLine(line);
-      board.push_back(row);
-    }
-  }
-  return board;
-}
-
-
-
-
 
 // Calculate the manhattan distance
 int Heuristic(int x1, int y1, int x2, int y2)
@@ -142,23 +102,12 @@ std::vector<std::vector<State>> Search(std::vector<std::vector<State>> grid, int
 }
 
 
-void PrintBoard(const std::vector<std::vector<State>> board)
-{
-  for (int i = 0; i < board.size(); i++)
-  {
-    for (int j = 0; j < board[i].size(); j++)
-    {
-      std::cout << Cell::CellString(board[i][j]);
-    }
-    std::cout << "\n";
-  }
-}
-
 int main()
 {
+  Board new_board;
   int init[2]{0, 0};
   int goal[2]{4, 5};
-  auto board = ReadBoardFile("../boards/1.board");
+  auto board = new_board.ReadBoardFile("../boards/1.board");
   auto solution = Search(board, init, goal);
-  PrintBoard(solution);
+  new_board.PrintBoard(solution);
 }
